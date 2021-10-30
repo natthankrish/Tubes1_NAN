@@ -1,0 +1,430 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Lato', sans-serif;
+}
+
+.header{
+    min-height: 35px;
+    width:100%;
+    position: relative;
+    background-color: #F9E4C8;
+}
+
+nav{
+    display: flex;
+    padding: 2% 6%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav h1 a{
+    color: black;
+    text-decoration: none;
+    font-size: 36px;
+}
+
+.head-links{
+    flex: 1;
+    text-align: right;
+}
+
+.head-links ul li{
+    list-style: none;
+    display: inline-block;
+    padding: 8px 12px;
+    position: relative;
+}
+
+.head-links ul li a{
+    color: black;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.head-links ul li::after{
+    content: '';
+    width: 0%;
+    height: 2px;
+    background: black;
+    display: block;
+    margin: auto;
+    transition:0.5s;
+}
+
+.head-links ul li:hover::after{
+    width: 100%;
+}
+
+.intro {
+    background-image: linear-gradient(rgba(4,9,30,0.3), rgba(4,9,30,0.3)), url(imgsource/illustration.png);
+    background-position: center;
+    background-size: cover;
+    min-height: 75vh;
+    width: 100%;
+}
+
+.text {
+    width:90%;
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%)
+}
+
+.intro h1{
+    font-size: 100px;
+}
+
+.intro p{
+    font-size: 28px;
+    padding-bottom: 25px;
+}
+
+.intro-btn{
+    display: inline-block;
+    text-decoration: none;
+    color: black;
+    border: 1px solid #F9CF93;
+    padding: 12px 34px;
+    background: wheat;
+    position: relative;
+}
+
+.intro-btn:hover{
+    border: 1px solid black;
+    background: black;
+    transition: 1s;
+    color: #F9CF93;
+}
+
+nav .top{
+    display: none;
+}
+
+.items{
+    width: 80%;
+    margin:auto;
+    text-align: center;
+}
+
+.items h2{
+    text-align: center;
+    padding-top: 50px;
+    padding-bottom: 10px;
+    font-size: 36px;
+}
+
+.row{
+    margin-top: 5%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.items-col{
+    flex-basis: 31%;
+    background-color: #DBD0C0;
+    border-radius: 10px;
+    margin-bottom: 5%;
+    padding: 20px 100px;
+    box-sizing: border-box;
+}
+
+.items-col:hover{
+    box-shadow: 0 0 20px 0 rgba(0,0,0,0.2);
+}
+
+.items-col h3{
+    font-size: 30px;
+    padding-top: 30px;
+    padding-bottom: 50px;
+}
+
+.items-col h4{
+    font-weight: 700;
+    font-size: 30px;
+    padding-top: 10px;
+    padding-bottom: 5px;
+}
+
+.items-col h5{
+    font-weight: 400;
+    font-size: 23px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.items-col h6{
+    font-weight: 400;
+    font-size: 23px;
+    padding-top: 5px;
+    padding-bottom: 50px;
+}
+
+.items-col img{
+    height: 650px
+}
+
+.items-close{
+    display: none;
+}
+
+.modal-bg{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.5s
+}
+
+.bg-active{
+    visibility: visible;
+    opacity: 1;
+    transition: 0.5s;
+}
+
+.modal{
+    background-color: white;
+    width : 1000px;
+    height : 480px;
+    display: flex;
+    border-radius: 10px;
+}
+
+.modal img{
+    padding: 25px;
+    height: 90%;
+}
+
+.modal h4{
+    font-size: 50px;
+    padding-bottom: 10px;
+    padding-top: 40px;
+}
+
+.modal h5{
+    font-size: 30px;
+    padding-bottom: 20px;
+}
+
+.modal h6{
+    font-size: 24px;
+    padding-bottom: 10px;
+}
+
+.modal p{
+    padding-right: 25px;
+}
+
+.modal-btn{
+    margin-top: 120px;
+    margin-right: 25px;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.modal-btn:hover{
+    background-color: black;
+    color:white;
+    border: 1px solid black;
+
+}
+
+.movies{
+    width: 80%;
+    margin:auto;
+    text-align: center;
+    background-color: #DBD0C0;
+}
+
+.movies h2{
+    text-align: center;
+    padding-top: 50px;
+    padding-bottom: 10px;
+    font-size: 36px;
+}
+
+.mrow {
+    margin-top: 5%;
+    display: flex;
+    margin-left:10px;
+}
+
+.mitems{
+    flex : left;
+    height: 400px;
+    width: 280px;
+    background-color: white;
+    margin: 10px 25px;
+    border-radius: 10px;
+    padding: 20px 10px;
+    
+}
+
+.mitems:hover{
+    box-shadow: 0 0 20px 0 rgba(0,0,0,0.2);
+}
+
+.mitems h3{
+    font-size: 30px;
+    padding-top: 30px;
+    padding-bottom: 50px;
+}
+
+.mitems h4{
+    font-weight: 700;
+    font-size: 20px;
+    padding-top: 7px;
+    padding-bottom: 3px;
+}
+
+.mitems h5{
+    font-weight: 400;
+    font-size: 18px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.mitems h6{
+    font-weight: 400;
+    font-size: 18px;
+    padding-top: 5px;
+    padding-bottom: 50px;
+}
+
+.mitems img{
+    height: 300px;
+    padding-top: 10px;
+}
+
+.modal-bg{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    visibility: hidden;
+    opacity: 0;
+    transition: 0.5s
+}
+
+.bg-active{
+    visibility: visible;
+    opacity: 1;
+    transition: 0.5s;
+}
+
+.modal{
+    background-color: white;
+    width : 1000px;
+    height : 480px;
+    display: flex;
+    border-radius: 10px;
+}
+
+.modal img{
+    padding: 25px;
+    height: 90%;
+}
+
+.modal h4{
+    font-size: 50px;
+    padding-bottom: 10px;
+    padding-top: 40px;
+}
+
+.modal h5{
+    font-size: 30px;
+    padding-bottom: 20px;
+}
+
+.modal h6{
+    font-size: 24px;
+    padding-bottom: 10px;
+}
+
+.modal p{
+    padding-right: 25px;
+}
+
+.modal-btn{
+    margin-top: 120px;
+    margin-right: 25px;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.modal-btn:hover{
+    background-color: black;
+    color:white;
+    border: 1px solid black;
+
+}
+
+@media(max-width: 700px){
+    nav h1 a{
+        font-size: 25px;
+    }
+
+    .intro h1{
+        font-size: 30px;
+    }
+
+    .intro p{
+        font-size: 12px;
+        padding-bottom: 5px;
+    }
+
+    .head-links ul li{
+        display: block;
+    }
+
+    .head-links{
+        position: absolute;
+        background: #DBD0C0;
+        height : 100vh;
+        width: 200px;
+        top: 0;
+        right: -200px;
+        text-align: left;
+        z-index: 2;
+        transition: 1s;
+    }
+
+    nav .top{
+        border: 1px solid black;
+        padding: 3px 3px;
+        display: block;
+        color:black;
+        margin: 10px;
+        font-size: 16px;
+        text-align: center;
+        cursor:pointer;
+    }
+
+    nav .top:hover{
+        border: 1px solid black;
+        background: black;
+        color: #F9E4C8;
+    }
+
+    .head-links ul{
+        padding: 30px;
+    }
+
+    .row{
+        flex-direction: column;
+    }
+}
