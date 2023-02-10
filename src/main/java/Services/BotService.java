@@ -35,21 +35,32 @@ public class BotService {
         this.playerAction = playerAction;
     }
 
-    public void computeNextPlayerAction(PlayerAction playerAction, List<List<Integer>> playerList, List<List<Integer>> objectList) {
+    public void computeNextPlayerAction(PlayerAction playerAction) {
         playerAction.action = PlayerActions.FORWARD;
         playerAction.heading = new Random().nextInt(360);
 
-        if (!gameState.getGameObjects().isEmpty()) {
-            var foodList = gameState.getGameObjects()
+        if (!gameState.getGameObjects().isEmpty() && playerStateList.size() >= 1) {
+            List<GameObject> foodList;
+            List<GameObject> enemies = gameState.getPlayerGameObjects()
+                    .stream()
+                    .filter(player -> player.getId() != bot.getId())
+                    .filter(player -> player.getSize() < bot.getSize())
+                    .collect(Collectors.toList());
+            if (enemies.size() == 0) {
+                foodList = gameState.getGameObjects()
                     .stream().filter(item -> item.getGameObjectType() == ObjectTypes.FOOD)
                     .sorted(Comparator
                             .comparing(item -> getDistanceBetween(bot, item)))
                     .collect(Collectors.toList());
-            // var playerList = gameState.getPlayerGameObjects()
-            //         .stream().filter(player -> player.getGameObjectType() == ObjectTypes.PLAYER)
-            //         .sorted(Comparator.comparing(player -> getDistanceBetween(bot, player))).collect(Collectors.toList());
-            // System.out.println(getHeadingBetween(playerList.get(0)));
-            playerAction.heading = getHeadingBetween(foodList.get(0));
+                playerAction.heading = getHeadingBetween(foodList.get(0));
+            } else {
+                enemies.sort(Comparator.comparing(player -> getDistanceBetween(bot, player)));
+                playerAction.heading = getHeadingBetween(enemies.get(0));
+            }
+            // 
+            // .sorted(Comparator.comparing(player -> getDistanceBetween(bot, player))).collect(Collectors.toList());
+            // System.out.println(getHeadingBetween(enemies.get(0)));
+            
         }
 
         this.playerAction = playerAction;

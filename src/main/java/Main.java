@@ -74,10 +74,9 @@ public class Main {
                     continue;
                 }
 
-                System.out.println(botService.getPlayerList());
                 botService.getPlayerAction().setPlayerId(bot.getId());
 
-                botService.computeNextPlayerAction(botService.getPlayerAction(), botService.getPlayerList(), botService.getObjectList());
+                botService.computeNextPlayerAction(botService.getPlayerAction());
                 if (hubConnection.getConnectionState() == HubConnectionState.CONNECTED) {
                     hubConnection.send("SendPlayerAction", botService.getPlayerAction());
                 }
