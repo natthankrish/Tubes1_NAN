@@ -12,10 +12,12 @@ public class BotService {
     private GameState gameState;
     private List<List<Integer>> playerStateList;
     private List<List<Integer>> objectStateList;
+    private boolean tick;
 
     public BotService() {
         this.playerAction = new PlayerAction();
         this.gameState = new GameState();
+        this.tick = false;
     }
 
 
@@ -40,13 +42,14 @@ public class BotService {
         playerAction.heading = new Random().nextInt(360);
 
         if (!gameState.getGameObjects().isEmpty() && playerStateList.size() >= 1) {
-            List<GameObject> foodList;
             List<GameObject> enemies = gameState.getPlayerGameObjects()
                     .stream()
                     .filter(player -> player.getId() != bot.getId())
                     .filter(player -> player.getSize() < bot.getSize())
                     .collect(Collectors.toList());
+            // playerAction.heading = getHeadingBetween(enemies.get(0));
             if (enemies.size() == 0) {
+                List<GameObject> foodList;
                 foodList = gameState.getGameObjects()
                     .stream().filter(item -> item.getGameObjectType() == ObjectTypes.FOOD)
                     .sorted(Comparator
@@ -58,14 +61,34 @@ public class BotService {
                 playerAction.heading = getHeadingBetween(enemies.get(0));
                 playerAction.action = PlayerActions.FIRETORPEDOES;
             }
+            if (this.tick) {
+                playerAction.action = PlayerActions.FIRETORPEDOES;
+                this.tick = false;
+                playerAction.heading = getHeadingBetween(enemies.get(0));
+            } else {
+                playerAction.action = PlayerActions.FORWARD;
+                List<GameObject> gasCloud;
+                gasCloud = gameState.getGameObjects()
+                    .stream().filter(item -> item.getGameObjectType() == ObjectTypes.GAS_CLOUD)
+                    .sorted(Comparator
+                            .comparing(item -> getDistanceBetween(bot, item)))
+                    .collect(Collectors.toList());
+                if (getDistanceBetween(bot, gasCloud.get(0)) < gasCloud.get(0).getSize()/2) {
+                    playerAction.action = PlayerActions.FIRETORPEDOES;
+                } else {
+                    this.tick = true;
+                    playerAction.heading = getHeadingBetween(enemies.get(0));
+                }
+                
+            }
             if(getDistanceFromCenter() + (bot.getSize() * 2) > gameState.getWorld().getRadius()){
                 System.out.println("To close to edge");
                 playerAction.heading = getHeadingCenter();
+                
             }
             // 
             // .sorted(Comparator.comparing(player -> getDistanceBetween(bot, player))).collect(Collectors.toList());
             // System.out.println(getHeadingBetween(enemies.get(0)));
-            
         }
 
         this.playerAction = playerAction;
