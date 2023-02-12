@@ -56,6 +56,11 @@ public class BotService {
             } else {
                 enemies.sort(Comparator.comparing(player -> getDistanceBetween(bot, player)));
                 playerAction.heading = getHeadingBetween(enemies.get(0));
+                playerAction.action = PlayerActions.FIRETORPEDOES;
+            }
+            if(getDistanceFromCenter() + (bot.getSize() * 2) > gameState.getWorld().getRadius()){
+                System.out.println("To close to edge");
+                playerAction.heading = getHeadingCenter();
             }
             // 
             // .sorted(Comparator.comparing(player -> getDistanceBetween(bot, player))).collect(Collectors.toList());
@@ -96,12 +101,22 @@ public class BotService {
         return Math.sqrt(triangleX * triangleX + triangleY * triangleY);
     }
 
+    private double getDistanceFromCenter(){
+        var temp = gameState.world.centerPoint;
+        var triangleX = Math.abs(temp.x - bot.getPosition().x);
+        var triangleY = Math.abs(temp.y - bot.getPosition().y);
+        return Math.sqrt(triangleX * triangleX + triangleY * triangleY);
+    }
+
     private int getHeadingBetween(GameObject otherObject) {
         var direction = toDegrees(Math.atan2(otherObject.getPosition().y - bot.getPosition().y,
                 otherObject.getPosition().x - bot.getPosition().x));
         return (direction + 360) % 360;
     }
-
+    private int getHeadingCenter(){
+        var direction = toDegrees(Math.atan2(0- bot.getPosition().y , 0 - bot.getPosition().x ));
+        return (direction+360)%360;
+    }
     private int toDegrees(double v) {
         return (int) (v * (180 / Math.PI));
     }
