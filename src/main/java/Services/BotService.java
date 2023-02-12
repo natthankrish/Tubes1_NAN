@@ -42,13 +42,18 @@ public class BotService {
         playerAction.heading = new Random().nextInt(360);
 
         if (!gameState.getGameObjects().isEmpty() && playerStateList.size() >= 1) {
-            List<GameObject> enemies = gameState.getPlayerGameObjects()
+            List <GameObject> allEnemies = gameState.getPlayerGameObjects()
+                                            .stream()
+                                            .filter(player -> player.getId() != bot.getId())
+                                            .collect(Collectors.toList());
+        
+            List<GameObject> targets = gameState.getPlayerGameObjects()
                     .stream()
                     .filter(player -> player.getId() != bot.getId())
                     .filter(player -> player.getSize() < bot.getSize())
                     .collect(Collectors.toList());
-            // playerAction.heading = getHeadingBetween(enemies.get(0));
-            if (enemies.size() == 0) {
+            // playerAction.heading = getHeadingBetween(targets.get(0));
+            if (targets.size() == 0) {
                 List<GameObject> foodList;
                 foodList = gameState.getGameObjects()
                     .stream().filter(item -> item.getGameObjectType() == ObjectTypes.FOOD)
@@ -57,13 +62,13 @@ public class BotService {
                     .collect(Collectors.toList());
                 playerAction.heading = getHeadingBetween(foodList.get(0));
             } else {
-                enemies.sort(Comparator.comparing(player -> getDistanceBetween(bot, player)));
-                playerAction.heading = getHeadingBetween(enemies.get(0));
+                targets.sort(Comparator.comparing(player -> getDistanceBetween(bot, player)));
+                playerAction.heading = getHeadingBetween(targets.get(0));
                 playerAction.action = PlayerActions.FIRETORPEDOES;
                 if (this.tick) {
                     playerAction.action = PlayerActions.FIRETORPEDOES;
                     this.tick = false;
-                    playerAction.heading = getHeadingBetween(enemies.get(0));
+                    playerAction.heading = getHeadingBetween(targets.get(0));
                 } else {
                     playerAction.action = PlayerActions.FORWARD;
                     List<GameObject> gasCloud;
@@ -77,15 +82,15 @@ public class BotService {
                         playerAction.action = PlayerActions.FIRETORPEDOES;
                     } else {
                         this.tick = true;
-                        playerAction.heading = getHeadingBetween(enemies.get(0));
+                        playerAction.heading = getHeadingBetween(targets.get(0));
                     }
                 }
+            } 
+            if(getDistanceFromCenter() + (bot.getSize() * 1.5) > gameState.getWorld().getRadius()){
+                System.out.println("To close to edge");
+                playerAction.heading = getHeadingCenter();   
             }
-            // if(getDistanceFromCenter() + (bot.getSize() * 2) > gameState.getWorld().getRadius()){
-            //     System.out.println("To close to edge");
-            //     playerAction.heading = getHeadingCenter();   
-            // }
-            // 
+            
             // .sorted(Comparator.comparing(player -> getDistanceBetween(bot, player))).collect(Collectors.toList());
             // System.out.println(getHeadingBetween(enemies.get(0)));
         }
@@ -117,6 +122,12 @@ public class BotService {
         optionalBot.ifPresent(bot -> this.bot = bot);
     }
 
+    private double getDistanceFromCenter(){
+        var triangleX = Math.abs(bot.getPosition().x - gameState.world.centerPoint.x);
+        var triangleY = Math.abs(bot.getPosition().y - gameState.world.centerPoint.y);
+        return Math.sqrt(triangleX * triangleX + triangleY*triangleY);
+    }
+
     private double getDistanceBetween(GameObject object1, GameObject object2) {
         var triangleX = Math.abs(object1.getPosition().x - object2.getPosition().x);
         var triangleY = Math.abs(object1.getPosition().y - object2.getPosition().y);
@@ -127,6 +138,13 @@ public class BotService {
         var direction = toDegrees(Math.atan2(otherObject.getPosition().y - bot.getPosition().y,
                 otherObject.getPosition().x - bot.getPosition().x));
         return (direction + 360) % 360;
+    }
+
+    private int getHeadingCenter(){
+        Position centerPoint = gameState.world.centerPoint;
+        var direction = toDegrees(Math.atan2(centerPoint.y- bot.getPosition().y,
+                            centerPoint.x - bot.getPosition().x));
+        return (direction + 360)%360;
     }
 
     private int toDegrees(double v) {
