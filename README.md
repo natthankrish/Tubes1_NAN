@@ -3,9 +3,10 @@
 
 ## **Table of Contents** 
 * [Deskripsi Program](#deskripsi-program)
-* [Requirement Program](#requirement-program)
-* [Menajalankan Program](#run-program)
+* [Requirement Program](#program-requirement)
+* [Menajalankan Program](#menjalankan-program)
 * [Deskripsi Folders dan Files](#files-desc)
+* [Nama, Nim, dan Pemabagian Tugas] (#anggota-kelompok-dan-pembagian-tugas)
 
 ## **Deskripsi Program**
 *Galaxio* adalah permainan *battle royale* yang mempertandingkan satu bot dengan beberapa bot kapal yang lain. Setiap pemain akan memiliki sebuah bot kapal. Tujuan akhir dari permainan ini adalah mempertahankan bot yang dimiliki hingga akhir pertandingan. Agar memenangkan pertandingan, setiap bot harus mengimplementasikan strategi tertentu untuk memenangkan pertandingan. Untuk tugas kali ini, strategi yang digunaakn harus berdasarkan algoritma greedy. Oleh karena itu, repositori ini memiliki algoritma greedy yang dapat digunakan untuk memenangkan pertandingan
