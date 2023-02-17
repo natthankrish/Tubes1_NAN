@@ -88,9 +88,9 @@ public class BotService {
                 System.out.println("Dikejar");
 
                 // beda ukuran dikit
-                if (allPlayersBigger.get(0).getSize() <= 1.2 * bot.getSize()) {
+                if (allPlayersBigger.get(0).getSize() <= 1.3 * bot.getSize() && getHeadingBetween(allPlayersBigger.get(0))>75) {
                     System.out.println("Bisa dilawan brow");
-                    this.tick = false;
+                
                     if (this.tick) {
                         playerAction.action = PlayerActions.FORWARD;
                         playerAction.heading = getHeadingBetween(allPlayersBigger.get(0));
@@ -104,13 +104,13 @@ public class BotService {
                         }
                         this.tick = true;
                     }
-                }
-                if (getHeadingBetween(allPlayersBigger.get(0)) < 50+allPlayersBigger.get(0).getSize()) {
+                } else {
+                    // (getHeadingBetween(allPlayersBigger.get(0)) < 50+allPlayersBigger.get(0).getSize()) 
                     System.out.println(getHeadingBetween(allPlayersBigger.get(0)));
                     System.out.println("Lari gan");
                     playerAction.action = PlayerActions.FORWARD;
                     playerAction.heading = (GetOppositeDirection(allPlayersBigger.get(0))+30) % 360;
-                    if (!burner && bot.getSize() > 30) {
+                    if (!burner && bot.getSize() > 20) {
                         playerAction.action = PlayerActions.STARTAFTERBURNER;
                         burner = true;
                         System.out.println("nyala gas PAS LARI");
@@ -177,26 +177,28 @@ public class BotService {
         if (torpedoes.size() > 0) {
             System.out.print("jarak bot ke torpedo: ");
             System.out.println(getDistanceBetween(bot, torpedoes.get(0)));
-            if (getDistanceBetween(bot, torpedoes.get(0)) < 50 + bot.getSize() / 2) {
+            if (getDistanceBetween(bot, torpedoes.get(0)) < 80 + bot.getSize() / 2) {
                 playerAction.action = PlayerActions.FORWARD;
-                if (bot.getSize() > 80 && torpedoes.size()>2) {
+                if (bot.getSize() > 50) {
                     playerAction.action = PlayerActions.ACTIVATESHIELD;
                 }
                 System.out.print("heading torpedo ");
                 System.out.println(torpedoes.get(0).currentHeading);
                 System.out.print("heading bot ");
                 System.out.println(bot.currentHeading);
-                playerAction.heading = (getHeadingBetween(torpedoes.get(0)) + 45) % 360;
+                playerAction.heading = (GetOppositeDirection(torpedoes.get(0)) + 60) % 360;
             }
         }
     }
     
     private void checkGasCloud(List<GameObject> gasCloud) {
         if (!gasCloud.isEmpty()) {
-            if (getDistanceBetween(bot, gasCloud.get(0)) <= 2.5 * bot.getSize()) {
+            System.out.print("jarak bot ke gas: ");
+            System.out.println(getDistanceBetween(bot, gasCloud.get(0)));
+            if (getDistanceBetween(bot, gasCloud.get(0)) <= 50 + 2.5 * bot.getSize()) {
                 System.out.println("hindar gascloud");
                 System.out.println(playerAction.heading);
-                playerAction.heading = (getHeadingBetween(gasCloud.get(0)) + 180) % 360;
+                playerAction.heading = (GetOppositeDirection(gasCloud.get(0)) + 45) % 360;
             }
         }
     }
