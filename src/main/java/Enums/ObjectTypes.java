@@ -4,7 +4,7 @@ public enum ObjectTypes {
   PLAYER(1),
   FOOD(2),
   WORMHOLE(3),
-  GAS_CLOUD(4),
+  GASCLOUD(4),
   ASTEROID_FIELD(5),
   TORPEDOSALVO(6),
   SUPERFOOD(7),

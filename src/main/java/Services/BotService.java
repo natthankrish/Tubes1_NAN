@@ -277,9 +277,10 @@ public class BotService {
                 if (getDistanceBetween(bot, gasCloud.get(0)) <= 2.5 * bot.getSize()) {
                     System.out.println("hindar gascloud");
                     System.out.println(playerAction.heading);
-                    playerAction.heading = (getHeadingBetween(gasCloud.get(0))+180)%360;
+                    playerAction.heading = (getHeadingBetween(gasCloud.get(0)) + 180) % 360;
                 }
             }
+            /* */
             /* Fungsi untuk memastikan supaya player ga keluar dari map */
             if (getDistanceFromCenter() + (bot.getSize() * 2.5) > gameState.getWorld().getRadius()) {
                 System.out.println("To close to edge");
