@@ -114,7 +114,7 @@ public class BotService {
                         playerAction.action = PlayerActions.STARTAFTERBURNER;
                         burner = true;
                         System.out.println("nyala gas PAS LARI");
-                    } else {
+                    } else if(burner) {
                         /* Matiin gas */
                         playerAction.action = PlayerActions.STOPAFTERBURNER;
                         burner = false;
@@ -122,15 +122,13 @@ public class BotService {
                     }
                     if(this.tick){
                             playerAction.heading = GetOppositeDirection(allPlayersBigger.get(0));
-                            playerAction.action = PlayerActions.FORWARD;
                             this.tick = false;
                     }else{
-                        if(bot.getSize()>=25){
+                        if(bot.getSize()>=40){
                                 playerAction.heading = getHeadingBetween(allPlayersBigger.get(0));
                                 playerAction.action = PlayerActions.FIRETORPEDOES;
                         }else{
                                 playerAction.heading = GetOppositeDirection(allPlayersBigger.get(0));
-                                playerAction.action = PlayerActions.FORWARD;
                         }
                         this.tick = true;
                     }
