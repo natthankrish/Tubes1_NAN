@@ -109,11 +109,30 @@ public class BotService {
                     System.out.println(getHeadingBetween(allPlayersBigger.get(0)));
                     System.out.println("Lari gan");
                     playerAction.action = PlayerActions.FORWARD;
-                    playerAction.heading = (GetOppositeDirection(allPlayersBigger.get(0))+30) % 360;
+                    playerAction.heading = (GetOppositeDirection(allPlayersBigger.get(0))+30);
                     if (!burner && bot.getSize() > 20) {
                         playerAction.action = PlayerActions.STARTAFTERBURNER;
                         burner = true;
                         System.out.println("nyala gas PAS LARI");
+                    } else {
+                        /* Matiin gas */
+                        playerAction.action = PlayerActions.STOPAFTERBURNER;
+                        burner = false;
+                        System.out.println("end burner");
+                    }
+                    if(this.tick){
+                            playerAction.heading = GetOppositeDirection(allPlayersBigger.get(0));
+                            playerAction.action = PlayerActions.FORWARD;
+                            this.tick = false;
+                    }else{
+                        if(bot.getSize()>=25){
+                                playerAction.heading = getHeadingBetween(allPlayersBigger.get(0));
+                                playerAction.action = PlayerActions.FIRETORPEDOES;
+                        }else{
+                                playerAction.heading = GetOppositeDirection(allPlayersBigger.get(0));
+                                playerAction.action = PlayerActions.FORWARD;
+                        }
+                        this.tick = true;
                     }
                 }
             }
@@ -161,6 +180,7 @@ public class BotService {
                         playerAction.action = PlayerActions.FIRETORPEDOES;
                     }
                     System.out.println("deket bgt");
+                
                 }
             }
             this.tick = false;
@@ -179,9 +199,9 @@ public class BotService {
             System.out.println(getDistanceBetween(bot, torpedoes.get(0)));
             if (getDistanceBetween(bot, torpedoes.get(0)) < 80 + bot.getSize() / 2) {
                 playerAction.action = PlayerActions.FORWARD;
-                if (bot.getSize() > 50) {
-                    playerAction.action = PlayerActions.ACTIVATESHIELD;
-                }
+                // if (bot.getSize() > 50) {
+                //     playerAction.action = PlayerActions.ACTIVATESHIELD;
+                // }
                 System.out.print("heading torpedo ");
                 System.out.println(torpedoes.get(0).currentHeading);
                 System.out.print("heading bot ");
@@ -195,7 +215,7 @@ public class BotService {
         if (!gasCloud.isEmpty()) {
             System.out.print("jarak bot ke gas: ");
             System.out.println(getDistanceBetween(bot, gasCloud.get(0)));
-            if (getDistanceBetween(bot, gasCloud.get(0)) <= 50 + 2.5 * bot.getSize()) {
+            if (getDistanceBetween(bot, gasCloud.get(0)) <= 50 + 1.25 * bot.getSize()) {
                 System.out.println("hindar gascloud");
                 System.out.println(playerAction.heading);
                 playerAction.heading = (GetOppositeDirection(gasCloud.get(0)) + 45) % 360;
@@ -208,7 +228,7 @@ public class BotService {
         if (getDistanceFromCenter() + (bot.getSize() * 2.5) > gameState.getWorld().getRadius()) {
             playerAction.action = PlayerActions.FORWARD;
             System.out.println("To close to edge");
-            playerAction.heading = getHeadingCenter();
+            playerAction.heading = getHeadingCenter()+30;
         }
     }
 
@@ -239,7 +259,7 @@ public class BotService {
                             .stream()
                             .filter(item_torpedo -> item_torpedo.getGameObjectType() == ObjectTypes.TORPEDOSALVO)
                             .filter(item_torpedo -> item_torpedo.currentHeading != bot.currentHeading)
-                            .filter(item_torpedo -> getDistanceBetween(bot, item_torpedo)<400)
+                            .filter(item_torpedo -> getDistanceBetween(bot, item_torpedo)<200)
                             .sorted(Comparator
                                     .comparing(item_torpedo -> getDistanceBetween(bot, item_torpedo)))
                             .collect(Collectors.toList());
@@ -257,11 +277,14 @@ public class BotService {
                 checkEnemy(targets);
             }
  
-            // Fungsi untuk memastikan apakah bot perlu menghindari dari bot lawan atau tidak
-            checkDefence();
-
+            /* Fungsi untuk menghindari gas cloud */
+            checkGasCloud(gasCloud);
+            
             //Fungsi untuk menghindari torpedo
             checkTorpedoes(torpedoes);
+
+            // Fungsi untuk memastikan apakah bot perlu menghindari dari bot lawan atau tidak
+            checkDefence();
 
             /* Matiin gas */
             if (bot.getSize() <= 70 && burner) {
@@ -269,9 +292,6 @@ public class BotService {
                 burner = false;
                 System.out.println("end burner");
             }
-            /* Fungsi untuk menghindari gas cloud */
-            checkGasCloud(gasCloud);
-
             /*Fungsi untuk mengecek apakah player dekat dengan ujung map */
             checkBorderofMap();
             System.out.println("");
