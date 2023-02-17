@@ -5,7 +5,6 @@
 * [Deskripsi Program](#deskripsi-program)
 * [Requirement Program](#program-requirement)
 * [Menajalankan Program](#menjalankan-program)
-* [Deskripsi Folders dan Files](#files-desc)
 * [Nama, Nim, dan Pemabagian Tugas] (#anggota-kelompok-dan-pembagian-tugas)
 
 ## **Deskripsi Program**
