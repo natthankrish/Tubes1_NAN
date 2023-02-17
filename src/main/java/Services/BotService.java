@@ -86,15 +86,17 @@ public class BotService {
         if (!allPlayersBigger.isEmpty()) {
             if (getDistanceBetween(allPlayersBigger.get(0), bot) <= 3 * allPlayersBigger.get(0).getSize()) {
                 System.out.println("Dikejar");
-                System.out.println(allPlayersBigger.get(0).currentHeading);
+
                 // beda ukuran dikit
                 if (allPlayersBigger.get(0).getSize() <= 1.2 * bot.getSize()) {
                     System.out.println("Bisa dilawan brow");
                     this.tick = false;
                     if (this.tick) {
+                        playerAction.action = PlayerActions.FORWARD;
                         playerAction.heading = getHeadingBetween(allPlayersBigger.get(0));
                         this.tick = false;
                     } else {
+                        playerAction.heading = getHeadingBetween(allPlayersBigger.get(0));
                         if (bot.getSize() >= 40) {
                             playerAction.action = PlayerActions.FIRETORPEDOES;
                         } else {
@@ -102,162 +104,162 @@ public class BotService {
                         }
                         this.tick = true;
                     }
-                } else {
+                }
+                if (getHeadingBetween(allPlayersBigger.get(0)) < 50+allPlayersBigger.get(0).getSize()) {
+                    System.out.println(getHeadingBetween(allPlayersBigger.get(0)));
                     System.out.println("Lari gan");
-                    playerAction.heading = (allPlayersBigger.get(0).currentHeading
-                            + allPlayersBigger.get(0).getSize()+90)%360;
                     playerAction.action = PlayerActions.FORWARD;
-                    if (!burner && bot.getSize() > 50) {
+                    playerAction.heading = (GetOppositeDirection(allPlayersBigger.get(0))+30) % 360;
+                    if (!burner && bot.getSize() > 30) {
                         playerAction.action = PlayerActions.STARTAFTERBURNER;
                         burner = true;
                         System.out.println("nyala gas PAS LARI");
                     }
-                    /* Ngarahin ke musuh yg lebih gede */
-                    // if(this.tick){
-                    // playerAction.heading = allPlayersBigger.get(0).currentHeading +
-                    // allPlayersBigger.get(0).getSize()/2;
-                    // playerAction.action = PlayerActions.FORWARD;
-                    // this.tick = false;
-                    // }else{
-                    // if(bot.getSize()>=40){
-                    // playerAction.heading = getHeadingBetween(allPlayersBigger.get(0));
-                    // playerAction.action = PlayerActions.FIRETORPEDOES;
-                    // }else{
-                    // playerAction.heading = allPlayersBigger.get(0).currentHeading +
-                    // allPlayersBigger.get(0).getSize()/2;
-                    // playerAction.action = PlayerActions.FORWARD;
-                    // }
-                    // this.tick = true;
-                    // }
                 }
             }
         }
     }
+
+    private void checkEnemy(List<GameObject> targets) {
+        /* Kondisi dimana ada target yang bisa dikejar. Target disort */
+        targets.sort(Comparator.comparing(player -> getDistanceBetween(bot, player)));
+        /* Bot diarahkan ke lawan */
+        playerAction.heading = getHeadingBetween(targets.get(0));
+        /* Bagian selang seling */
+        if (this.tick) {
+            if (bot.getSize() > 30) {
+                // nyalain burner klo jauh dri target
+                if (getDistanceBetween(bot, targets.get(0)) > 200
+                        && targets.get(0).getSize() < bot.getSize() * 1.25) {
+                    if (!burner) {
+                        playerAction.action = PlayerActions.STARTAFTERBURNER;
+                        burner = true;
+                        System.out.println("nyala gas");
+                    } else if (bot.getSize() < 70) {
+                        playerAction.action = PlayerActions.STOPAFTERBURNER;
+                        burner = false;
+                        System.out.println("mati gas");
+                    }
+                    System.out.println("far from target");
+                }
+
+                else if (getDistanceBetween(bot, targets.get(0)) < bot.getSize() / 2 + 75 && targets.get(0).getSize() < bot.getSize() * 1.25)
+                // deket sm target
+                {
+                    if (burner) {
+                        playerAction.action = PlayerActions.STOPAFTERBURNER;
+                        burner = false;
+                        System.out.println("mati lg gas");
+                    }
+                    playerAction.heading = getHeadingBetween(targets.get(0));
+                    if (bot.getSize() > 40) {
+                        playerAction.action = PlayerActions.FIRETORPEDOES;
+                    }
+                } else {
+                    playerAction.heading = getHeadingBetween(targets.get(0));
+                    if (bot.getSize() > 40) {
+                        playerAction.action = PlayerActions.FIRETORPEDOES;
+                    }
+                    System.out.println("deket bgt");
+                }
+            }
+            this.tick = false;
+        } else {
+            playerAction.heading = getHeadingBetween(targets.get(0));
+            this.tick = true;
+            if (bot.getSize() > 40) {
+                playerAction.action = PlayerActions.FIRETORPEDOES;
+            }
+        }
+    }
+    
+    private void checkTorpedoes(List<GameObject> torpedoes) {
+        if (torpedoes.size() > 0) {
+            System.out.print("jarak bot ke torpedo: ");
+            System.out.println(getDistanceBetween(bot, torpedoes.get(0)));
+            if (getDistanceBetween(bot, torpedoes.get(0)) < 50 + bot.getSize() / 2) {
+                playerAction.action = PlayerActions.FORWARD;
+                if (bot.getSize() > 80 && torpedoes.size()>2) {
+                    playerAction.action = PlayerActions.ACTIVATESHIELD;
+                }
+                System.out.print("heading torpedo ");
+                System.out.println(torpedoes.get(0).currentHeading);
+                System.out.print("heading bot ");
+                System.out.println(bot.currentHeading);
+                playerAction.heading = (getHeadingBetween(torpedoes.get(0)) + 45) % 360;
+            }
+        }
+    }
+    
+    private void checkGasCloud(List<GameObject> gasCloud) {
+        if (!gasCloud.isEmpty()) {
+            if (getDistanceBetween(bot, gasCloud.get(0)) <= 2.5 * bot.getSize()) {
+                System.out.println("hindar gascloud");
+                System.out.println(playerAction.heading);
+                playerAction.heading = (getHeadingBetween(gasCloud.get(0)) + 180) % 360;
+            }
+        }
+    }
+    
+    private void checkBorderofMap() {
+        /* Fungsi untuk memastikan supaya player ga keluar dari map */
+        if (getDistanceFromCenter() + (bot.getSize() * 2.5) > gameState.getWorld().getRadius()) {
+            playerAction.action = PlayerActions.FORWARD;
+            System.out.println("To close to edge");
+            playerAction.heading = getHeadingCenter();
+        }
+    }
+
 
     public void computeNextPlayerAction(PlayerAction playerAction) {
         playerAction.action = PlayerActions.FORWARD;
         playerAction.heading = new Random().nextInt(360);
 
         if (!gameState.getGameObjects().isEmpty() && playerStateList.size() >= 1) {
-            
+            System.out.println("");
+            /*Himpunan kandidat musuh */
             List<GameObject> allEnemies = gameState.getPlayerGameObjects()
                     .stream()
                     .filter(player -> player.getId() != bot.getId())
                     .sorted(Comparator
                             .comparing(player -> getDistanceBetween(bot, player)))
                     .collect(Collectors.toList());
-
+            /*Himpunan kandidat musuh yang lebih kecil */
             List<GameObject> targets = gameState.getPlayerGameObjects()
                     .stream()
                     .filter(player -> player.getId() != bot.getId())
                     .filter(player -> player.getSize() < bot.getSize())
 
                     .collect(Collectors.toList());
-            // playerAction.heading = getHeadingBetween(targets.get(0));
-            List<GameObject> teleporters;
-            teleporters = gameState.getGameObjects()
-                    .stream()
-                    .filter(tele_item -> tele_item.getGameObjectType() == ObjectTypes.TELEPORTER)
-                    .collect(Collectors.toList());
-            
+            /*Himpunan kandidat meriam yang lebih kecil */
+            List<GameObject> torpedoes;
+                    torpedoes = gameState.getGameObjects()
+                            .stream()
+                            .filter(item_torpedo -> item_torpedo.getGameObjectType() == ObjectTypes.TORPEDOSALVO)
+                            .filter(item_torpedo -> item_torpedo.currentHeading != bot.currentHeading)
+                            .filter(item_torpedo -> getDistanceBetween(bot, item_torpedo)<400)
+                            .sorted(Comparator
+                                    .comparing(item_torpedo -> getDistanceBetween(bot, item_torpedo)))
+                            .collect(Collectors.toList());
+            /*Himpunan kandidat gas cloud */
+            List<GameObject> gasCloud;
+                            gasCloud = gameState.getGameObjects()
+                                    .stream().filter(item -> item.getGameObjectType() == ObjectTypes.GASCLOUD)
+                                    .sorted(Comparator
+                                            .comparing(item -> getDistanceBetween(bot, item)))
+                                    .collect(Collectors.toList());
+
             if (targets.size() == 0) {
                 searchFoods();
-                if (bot.getSize() < 50 && burner) {
-                    playerAction.action = PlayerActions.STOPAFTERBURNER;
-                    burner = false;
-                    System.out.println("end burner");
-                }
             } else {
-
-                /* Kondisi dimana ada target yang bisa dikejar. Target disort */
-                targets.sort(Comparator.comparing(player -> getDistanceBetween(bot, player)));
-                /* Bot diarahkan ke lawan */
-                playerAction.heading = getHeadingBetween(targets.get(0));
-
-                
-                /* Bagian selang seling */
-                if (this.tick) {
-                    if (bot.getSize() > 30) {
-                        // nyalain burner klo jauh dri target
-                        if (getDistanceBetween(bot, targets.get(0)) > 200
-                                && targets.get(0).getSize() < bot.getSize() * 1.25) {
-
-                            if (!burner) {
-                                playerAction.action = PlayerActions.STARTAFTERBURNER;
-                                burner = true;
-                                System.out.println("nyala gas");
-                            } else if (bot.getSize() < 70) {
-                                playerAction.action = PlayerActions.STOPAFTERBURNER;
-                                burner = false;
-                                System.out.println("mati gas");
-                            }
-                            System.out.println("far from target");
-                        }
-
-                        else if (getDistanceBetween(bot, targets.get(0)) < bot.getSize() / 2 + 75
-                                && targets.get(0).getSize() < bot.getSize() * 1.25)
-                        // deket sm target
-                        {
-                            if (burner) {
-                                playerAction.action = PlayerActions.STOPAFTERBURNER;
-                                burner = false;
-                                System.out.println("mati lg gas");
-                            }
-                            playerAction.heading = getHeadingBetween(targets.get(0));
-                            if (bot.getSize() > 40) {
-                                playerAction.action = PlayerActions.FIRETORPEDOES;
-                            }
-                            System.out.println("deket");
-                            System.out.println(targets.get(0).currentHeading);
-                            System.out.println(GetOppositeDirection(targets.get(0)));
-                            playerAction.heading = GetOppositeDirection(targets.get(0));
-                        } else {
-                            playerAction.heading = getHeadingBetween(targets.get(0));
-                            if (bot.getSize() > 40) {
-                                playerAction.action = PlayerActions.FIRETORPEDOES;
-                            }
-                            System.out.println("deket bgt");
-                        }
-                    }
-                    this.tick = false;
-                    playerAction.heading = getHeadingBetween(targets.get(0));
-                } else {
-                    playerAction.heading = getHeadingBetween(targets.get(0));
-                    this.tick = true;
-                    if (bot.getSize() > 40) {
-                        playerAction.action = PlayerActions.FIRETORPEDOES;
-                    }
-                }
+                checkEnemy(targets);
             }
-            
-            // Fungsi untuk memastikan apakah bot perlu menghindari dari bot lawan atau
-            // tidak
-
+ 
+            // Fungsi untuk memastikan apakah bot perlu menghindari dari bot lawan atau tidak
             checkDefence();
-            List<GameObject> torpedoes;
-            torpedoes = gameState.getGameObjects()
-                    .stream()
-                    .filter(item_torpedo -> item_torpedo.getGameObjectType() == ObjectTypes.TORPEDOSALVO)
-                    .filter(item_torpedo -> item_torpedo.currentHeading != bot.currentHeading)
-                    .filter(item_torpedo -> getDistanceBetween(bot, item_torpedo)<400)
-                    .sorted(Comparator
-                            .comparing(item_torpedo -> getDistanceBetween(bot, item_torpedo)))
-                    .collect(Collectors.toList());
 
-            if (torpedoes.size() > 0) {
-                System.out.print("jarak bot ke torpedo: ");
-                System.out.println(getDistanceBetween(bot, torpedoes.get(0)));
-                if (getDistanceBetween(bot, torpedoes.get(0)) < 90 + bot.getSize() / 2) {
-                    if (bot.getSize() > 80) {
-                        playerAction.action = PlayerActions.ACTIVATESHIELD;
-                    }
-                    System.out.print("heading torpedo ");
-                    System.out.println(torpedoes.get(0).currentHeading);
-                    System.out.print("heading bot ");
-                    System.out.println(bot.currentHeading);
-                    playerAction.heading = (getHeadingBetween(torpedoes.get(0))+45)%360;
-                }
-            }
+            //Fungsi untuk menghindari torpedo
+            checkTorpedoes(torpedoes);
 
             /* Matiin gas */
             if (bot.getSize() <= 70 && burner) {
@@ -266,30 +268,11 @@ public class BotService {
                 System.out.println("end burner");
             }
             /* Fungsi untuk menghindari gas cloud */
-            List<GameObject> gasCloud;
-            gasCloud = gameState.getGameObjects()
-                    .stream().filter(item -> item.getGameObjectType() == ObjectTypes.GASCLOUD)
-                    .sorted(Comparator
-                            .comparing(item -> getDistanceBetween(bot, item)))
-                    .collect(Collectors.toList());
-            
-            if (!gasCloud.isEmpty()) {
-                if (getDistanceBetween(bot, gasCloud.get(0)) <= 2.5 * bot.getSize()) {
-                    System.out.println("hindar gascloud");
-                    System.out.println(playerAction.heading);
-                    playerAction.heading = (getHeadingBetween(gasCloud.get(0)) + 180) % 360;
-                }
-            }
-            /* */
-            /* Fungsi untuk memastikan supaya player ga keluar dari map */
-            if (getDistanceFromCenter() + (bot.getSize() * 2.5) > gameState.getWorld().getRadius()) {
-                System.out.println("To close to edge");
-                playerAction.heading = getHeadingCenter();
-            }
-            // .sorted(Comparator.comparing(player -> getDistanceBetween(bot,
-            // player))).collect(Collectors.toList());
-            // System.out.println(getHeadingBetween(enemies.get(0)));
-            
+            checkGasCloud(gasCloud);
+
+            /*Fungsi untuk mengecek apakah player dekat dengan ujung map */
+            checkBorderofMap();
+            System.out.println("");
         }
 
         this.playerAction = playerAction;
